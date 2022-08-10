@@ -15,16 +15,18 @@ const tickets = [];
 	ticket_status,
 	ticket_subject,
 	ticket_description,
+    ticket_from,
 	opener_id,
 	closer_id
 }
-    ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, opener_id, closer_id
+    ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id
 */
 
 //Checks the validity of a ticket
 async function isValidTicket(req, res, next){
-        let { ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, opener_id, closer_id } = req.body;
+        let { ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id } = req.body;
 
+    console.log(req.body);
     //What's the actual logic to validate a ticket object
 
     //Assume true:
@@ -59,34 +61,31 @@ async function isValidTicket(req, res, next){
             req.validReason = 'Status must be between 1 and 4';
         }
 
-    //make sure String values exist are clean (ticket_subject, ticket_description)
-        if(ticket_subject === undefined || ticket_subject === null || (typeof ticket_subject != 'string')){
-            ticket_subject = 'Unknown';
-        } else {
+    /*/make sure String values exist are clean (ticket_subject, ticket_description)
+        if(ticket_subject === undefined || ticket_subject === undefined || ticket_from === undefined){
+            req.isValid = false;
+            req.validReason = 'Please include all required fields'
+            next()
+        }*/
 
     //Sanitize string values and truncate if necessary
-//could refactor this out into a separate function
-        ticket_subject = ticket_subject.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"");
-        ticket_subject = ticket_subject.trim();
-            if(ticket_subject.length > 50){
-                ticket_subject = ticket_subject.slice(0, 50);
-            }
-        }
-        ticket_description = ticket_description.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"");
-        ticket_description = ticket_description.trim();
-            if(ticket_description.length > 140){
-                ticket_description = ticket_description.slice(0, 140);
-            }
-
+    console.log(ticket_subject);
+        ticket_subject = sanitizeInput(ticket_subject, 50);
+        ticket_description = sanitizeInput(ticket_description, 140);
+        ticket_from = sanitizeInput(ticket_from, 40);
+        
     //validate Date format (open_date, close_date)
-    const validatePattern = /^(\d{4})(\/|-)(\d{1,2})(\/|-)(\d{1,2})$/;
-    const dateValA = open_date.match(validatePattern);
-    const dateValB = close_date.match(validatePattern);
-    if(!dateValA || !dateValB){
-        req.isValid = false;
-        req.validReason = 'Invalid date format';
-        next();
-    }
+        const validatePattern = /^(\d{4})(\/|-)(\d{1,2})(\/|-)(\d{1,2})$/;
+        const dateValA = open_date.match(validatePattern);
+        let dateValB = true;
+        if(close_date != null){
+            dateValB = close_date.match(validatePattern);
+        }
+        if(!dateValA || !dateValB){
+            req.isValid = false;
+            req.validReason = 'Invalid date format';
+            next();
+        }
 
         const fixedNewTicket = {
             ticket_id,
@@ -104,6 +103,15 @@ async function isValidTicket(req, res, next){
         next();
 }
 
+function sanitizeInput(stringle, numChar){
+    console.log('inside sanitize:'+stringle);
+    stringle = stringle.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"");
+    stringle = stringle.trim();
+            if(stringle.length > numChar){
+                ticket_subject = ticket_subject.slice(0, numChar);
+            }
+    return stringle;
+}
 
 txRouter.get('/inbox', async (req, res, next) => {
     const queryText = 'SELECT * FROM tickets;';
@@ -115,22 +123,30 @@ txRouter.get('/inbox', async (req, res, next) => {
     res.status(200).send(tickets);
 });
 
-/*
+
 //Create a new ticket from user input
 txRouter.post('/newTicket', isValidTicket, async (req, res, next) => {
-    if(req.IDMatch){
-        req.isValid = false; 
-        req.validReason = 'Must use a unique ID for new tickets.' //This can be obsoleted if every new ticket gets an auto-generated ID...how to set that up
-    }
+    console.log('inside POST');
     if(!req.isValid){
         res.status(400).send(req.validReason);
     } else {
-        const newT = req.body;
-        
-        const queryText = 'insert query for new object here; dont include ticket_id because that is IDENTITY'
-        await db.query(queryText, [newT.ticket_id, newT.wd_envelope_id, newT.ticket_date, newT.payment_recipient, newT.payment_amount]);
+        const {ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id} = req.body;
+        const queryText = 'INSERT INTO tickets (open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id) VALUES ($1, NULL, $2, $3, $4, $5, $6, $7, NULL);';
+        console.log(req.body);
+        console.log(queryText);
+        const queryParams = [
+            open_date, 
+            ticket_priority, 
+            ticket_status, 
+            ticket_subject, 
+            ticket_description, 
+            ticket_from, 
+            opener_id, 
+        ]
+        await db.query(queryText, queryParams);
 
-        tickets.push(newT);
+        console.log(req.body);
+        tickets.push(req.body);
         res.status(200).send(tickets);
     }
 });

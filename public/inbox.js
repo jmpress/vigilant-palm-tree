@@ -39,7 +39,7 @@ function displayTicketHeaders(){
 }
 
 newTicket.addEventListener('click', () => {
-    window.location.href = "./newTicket.html"
+    window.location.href = './newTicket.html'
 });
 
 //These functions should maybe be server-side?

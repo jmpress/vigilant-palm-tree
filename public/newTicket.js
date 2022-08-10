@@ -1,15 +1,52 @@
 //Fetch variables
-let headers = {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-};
+    let headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    };
 
-async function postNewTicket(){
-    //get pieces from HTML input fields
+//Input field Variables
+    const newPriority = document.getElementById('newPriority');
+    const newSubj = document.getElementById('newSubj');
+    const newDetails = document.getElementById('newDetails');
+    const newRegarding = document.getElementById('regarding');
 
-    //build new Ticket object from those pieces
+//Button variables
+    const newTicketButton = document.getElementById('newTicket');
 
-    //fetch POST request with appropriate headers (new Ticket object in body)
+//eventHandlers
 
+    newTicketButton.addEventListener('click', () => {
+        let currentDate = new Date();
+        let cDay = currentDate.getDate();
+        let cMonth = currentDate.getMonth() + 1;
+        let cYear = currentDate.getFullYear();
+        let dateString = `${cYear}-${cMonth}-${cDay}`;
+        
+        newTx = {
+            ticket_id: 0,
+            open_date: dateString,
+            close_date: null,
+            ticket_priority: newPriority.value,
+            ticket_status: 1,
+            ticket_subject: newSubj.value,
+            ticket_description: newDetails.value,
+            ticket_from: newRegarding.value,
+            opener_id: 1,
+            closer_id: null
+        };
+        postNewTicket(newTx);
+    });
 
-}
+//fetch request
+    async function postNewTicket(newTx){
+        //fetch POST request with appropriate headers (new Ticket object in body)
+        console.log(newTx);
+        const response = await fetch(`/newTicket`, {method: 'POST', headers: headers, body: JSON.stringify(newTx)});
+        if(response.ok){
+            console.log('Should be good, check the DB');
+            window.location.href = './inbox.html'
+        } else {
+            
+        }
+    }
+

@@ -25,7 +25,7 @@
         
         newTx = {
             ticket_id: 0,
-            open_date: dateString,
+            open_date: todaysDate(),
             close_date: null,
             ticket_priority: newPriority.value,
             ticket_status: 1,

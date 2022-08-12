@@ -30,6 +30,7 @@ async function isValidTicket(req, res, next){
 
     //Assume true:
         req.isValid = true;
+        req.validReason = 'all ok';
         req.IDMatch = false;
 
     //ticket_id is auto incremented by the database itself, therefore...
@@ -73,10 +74,12 @@ async function isValidTicket(req, res, next){
         ticket_from = sanitizeInput(ticket_from, 40);
         
     //validate Date format (open_date, close_date)
+        open_date = sanitizeInput(open_date, 10);
         const validatePattern = /^(\d{4})(\/|-)(\d{1,2})(\/|-)(\d{1,2})$/;
         const dateValA = open_date.match(validatePattern);
         let dateValB = true;
         if(close_date != null){
+            close_date = sanitizeInput(close_date, 10);
             dateValB = close_date.match(validatePattern);
         }
         if(!dateValA || !dateValB){
@@ -105,7 +108,7 @@ function sanitizeInput(stringle, numChar){
     stringle = stringle.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"");
     stringle = stringle.trim();
             if(stringle.length > numChar){
-                ticket_subject = ticket_subject.slice(0, numChar);
+                stringle = stringle.slice(0, numChar);
             }
     return stringle;
 }
@@ -176,7 +179,7 @@ txRouter.put('/updateTicket/:id', isValidTicket, async (req, res, next) => {
     if(!req.isValid){
         res.status(400).send(req.validReason);
     } else {
-        let {ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id} = req.body;
+        let {ticket_id, close_date, ticket_priority, ticket_status, ticket_description, closer_id} = req.body;
 
         const queryText = `UPDATE tickets SET close_date = $2, ticket_priority = $3, ticket_status = $4, ticket_description = $5, closer_id = $6 WHERE ticket_id = $1;`;
         
@@ -189,6 +192,12 @@ txRouter.put('/updateTicket/:id', isValidTicket, async (req, res, next) => {
             closer_id
         ]
         await db.query(queryText, queryParams);
+
+        if(close_date != null && closer_id != null){
+            //Ticket just closed: update the num_tix_closed value of the user
+            const queryText2 = 'UPDATE users SET num_tix_closed = num_tix_closed +1 WHERE u_id = $1';
+            await db.query(queryText2, [closer_id]);
+        }
 
         //tickets.push(req.body);
         res.status(200).send();

@@ -28,7 +28,7 @@
 
 //Display and formatting
     function displayTicketHeaders(){
-            let ticketHeaders = `Tickets<br><table class = "styled-table"><thead><tr><th>ID</th><th>Status</th><th>Priority</th><th>Summary</th><th>From</th></tr></thead><tbody>`;
+            let ticketHeaders = `<table class = "styled-table"><thead><tr><th>ID</th><th>Status</th><th>Priority</th><th>Summary</th><th>From</th></tr></thead><tbody>`;
 
             tickets.forEach(ticket => {
                 const priority = setPriority(ticket.ticket_priority)
@@ -92,5 +92,5 @@ function setStatus(sCode){
 }
 
 function testUpdate(){
-    window.location.href = './updateTicket.html?id=4'
+    window.location.href = './updateTicket.html?id=10'
 }

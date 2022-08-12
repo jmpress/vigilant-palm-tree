@@ -41,11 +41,13 @@
         let open_date;
         let closer_id;
         let combined_description;
-        
-        if(OGTicket.ticket_status != 4 && updateStatus.value === 4){ //if closing
+
+        if(OGTicket.ticket_status != 4 && updateStatus.value == 4){ //if closing
+
             close_date = todaysDate();
             closer_id = 1;   //currently logged in USER
             open_date = OGTicket.open_date;
+
         } else {
             close_date = null;
             closer_id = null;
@@ -54,15 +56,13 @@
 
         combined_description = concatDetails(todaysDate(), updateDetails.value, oldDetails.value);
 
-        console.log(combined_description);
-
         updatedTx = {
             ticket_id: OGTicket.ticket_id,
             open_date: open_date,
             close_date: close_date,
             ticket_priority: updatePriority.value,
             ticket_status: updateStatus.value,
-            ticket_subject: updateSubj.value,
+            ticket_subject: OGTicket.ticket_subject,
             ticket_description: combined_description,
             ticket_from: updateRegarding.value,
             opener_id: 1,
@@ -90,10 +90,8 @@
 
     async function saveTicket(updateTx){
         //fetch POST request with appropriate headers (update Ticket object in body)
-        console.log(updateTx);
         const response = await fetch(`/updateTicket/${updateTx.ticket_id}`, {method: 'PUT', headers: headers, body: JSON.stringify(updateTx)});
         if(response.ok){
-            console.log('Should be good, check the DB');
             window.location.href = './inbox.html';
         } else {
             

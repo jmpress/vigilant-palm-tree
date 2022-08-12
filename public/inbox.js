@@ -31,10 +31,12 @@
             let ticketHeaders = `<table class = "styled-table"><thead><tr><th>ID</th><th>Status</th><th>Priority</th><th>Summary</th><th>From</th></tr></thead><tbody>`;
 
             tickets.forEach(ticket => {
-                const priority = setPriority(ticket.ticket_priority)
-                const status = setStatus(ticket.ticket_status)
+                if(ticket.ticket_status != 4){
+                    const priority = setPriority(ticket.ticket_priority)
+                    const status = setStatus(ticket.ticket_status)
                 
-                ticketHeaders = ticketHeaders + `<tr><td>${ticket.ticket_id}</td><td>${status}</td><td>${priority}</td><td>${ticket.ticket_subject}</td><td>${ticket.ticket_from}</td>`;
+                    ticketHeaders = ticketHeaders + `<tr class = "row-highlight" id="link" onclick="document.location='./updateTicket.html?id=${ticket.ticket_id}';"><td>${ticket.ticket_id}</td><td>${status}</td><td>${priority}</td><td>${ticket.ticket_subject}</td><td>${ticket.ticket_from}</td>`;
+                }
             });
             ticketHeaders += "</tbody></table>";
             ticketListArea.innerHTML=ticketHeaders;   
@@ -91,6 +93,3 @@ function setStatus(sCode){
     }
 }
 
-function testUpdate(){
-    window.location.href = './updateTicket.html?id=10'
-}

@@ -173,7 +173,7 @@ txRouter.get('/updateTicket/:id', async (req, res, next) => {
 });
 
 //PUT route to update values of a ticket
-
+//works, and increments user stat for closing a ticket when appropriate
 txRouter.put('/updateTicket/:id', isValidTicket, async (req, res, next) => {
     //Updating a ticket should:
     if(!req.isValid){

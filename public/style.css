@@ -33,6 +33,14 @@ th {
     text-align: left;
 }
 
+.styled-table tr {
+    cursor: pointer;
+}
+
+.row-highlight:hover {
+    background: #48494A;
+}
+
 .styled-table th,
 .styled-table td {
     padding: 12px 15px;

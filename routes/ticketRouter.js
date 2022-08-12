@@ -126,6 +126,7 @@ txRouter.post('/newTicket', isValidTicket, async (req, res, next) => {
     if(!req.isValid){
         res.status(400).send(req.validReason);
     } else {
+        tickets.length = 0;
         const {ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id} = req.body;
         const queryText = 'INSERT INTO tickets (open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id) VALUES ($1, NULL, $2, $3, $4, $5, $6, $7, NULL);';
         const queryParams = [
@@ -143,25 +144,6 @@ txRouter.post('/newTicket', isValidTicket, async (req, res, next) => {
         res.status(200).send(tickets);
     }
 });
-
-//This is returning an undefined value for some reason
-function concatDetails(todayDate, newDetails, oldDetails = ''){
-    console.log('inside Concat!');
-    /*this function is used for making sure useful information gets concatenated into the detail field.
-        This field should be structured as such:
-            {open date} initial details by case-opener(linebreak)
-            {edit date} new details by next person working on it.(linebreak)    --how to do a linebreak that is going to be stored in SQL and also displayed in HTML?
-            {edit date} new details by next person working on it.(linebreak)
-            {edit date} new details by next person working on it.(linebreak)
-            {closed} on {closed date}
-    */
-    console.log('' + oldDetails + '||' + todayDate + ': ' + newDetails + '||');
-    const finalResult = '' + oldDetails + '||' + todayDate + ': ' + newDetails + '||';
-    console.log(finalResult);
-
-    return finalResult;
-
-}
 
   
 //GET route to get single ticket into
@@ -187,24 +169,28 @@ txRouter.get('/updateTicket/:id', async (req, res, next) => {
     res.status(200).send(getOne)
 });
 
-
-
 //PUT route to update values of a ticket
 
-txRouter.put('/:id', isValidTicket, async (req, res, next) => {
+txRouter.put('/updateTicket/:id', isValidTicket, async (req, res, next) => {
     //Updating a ticket should:
-        //display existing ticket_description in an uneditable field
-        //have a field to include more information
-        //when assembling the final object for insertion into DB, IF there's details to add, run concatDetails() to put it all together into one field again. If not, skip that to avoid weird formatting.
-    if(!req.IDMatch){ //valid ticket but ID doesn't match
-        req.isValid = false; 
-        req.validReason = 'ID does not exist yet. Make a new ticket with this ID before Updating it.'
-    }
     if(!req.isValid){
         res.status(400).send(req.validReason);
-    } else {    
-        
+    } else {
+        let {ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id} = req.body;
 
+        const queryText = `UPDATE tickets SET close_date = $2, ticket_priority = $3, ticket_status = $4, ticket_description = $5, closer_id = $6 WHERE ticket_id = $1;`;
+        
+        const queryParams = [
+            ticket_id,
+            close_date, 
+            ticket_priority, 
+            ticket_status, 
+            ticket_description, 
+            closer_id
+        ]
+        await db.query(queryText, queryParams);
+
+        //tickets.push(req.body);
         res.status(200).send();
     }
 });

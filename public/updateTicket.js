@@ -5,16 +5,17 @@
     };
 
 //Input field Variables
-    const inputFieldArea = document.getElementById('inputFieldArea');
-    const updatePriority = document.getElementById('updatePriority');
-    const updateStatus = document.getElementById('updateStatus');
-    const updateSubj = document.getElementById('updateSubj');
-    const oldDetails = document.getElementById('oldDetails');
-    const updateDetails = document.getElementById('updateDetails');
-    const updateRegarding = document.getElementById('updateRegarding');
+    const inputFieldArea = document.getElementById("inputFieldArea");
+    let updatePriority;
+    let updateStatus;
+    let updateSubj;
+    let oldDetails;
+    let updateDetails;
+    let updateRegarding;
 
 //Button variables
     const updateTicketButton = document.getElementById('updateTicket');
+    const cancelUpdateButton = document.getElementById('cancelUpdate');
 
 //Data variables
     let OGTicket = {};
@@ -23,19 +24,24 @@
     const targetID = getQueryVariable('id')
     getTicket(targetID); //THIS ISN'T SETTING THE OGTicket object appropriately.
     
-    
-    
 
 //Page Load actions  - not many because majority of page is built after.
 
 
 //eventHandlers
 
-    updateTicketButton.addEventListener('click', () => {
+    updateTicketButton.addEventListener('click', async () => {
+        updatePriority = document.getElementById('updatePriority');
+        updateStatus = document.getElementById('updateStatus');
+        updateSubj = document.getElementById('updateSubj');
+        oldDetails = document.getElementById('oldDetails');
+        updateDetails = document.getElementById('updateDetails');
+        updateRegarding = document.getElementById('updateRegarding');
         let close_date;
         let open_date;
         let closer_id;
-
+        let combined_description;
+        
         if(OGTicket.ticket_status != 4 && updateStatus.value === 4){ //if closing
             close_date = todaysDate();
             closer_id = 1;   //currently logged in USER
@@ -46,6 +52,10 @@
             open_date = todaysDate();
         }
 
+        combined_description = concatDetails(todaysDate(), updateDetails.value, oldDetails.value);
+
+        console.log(combined_description);
+
         updatedTx = {
             ticket_id: OGTicket.ticket_id,
             open_date: open_date,
@@ -53,7 +63,7 @@
             ticket_priority: updatePriority.value,
             ticket_status: updateStatus.value,
             ticket_subject: updateSubj.value,
-            ticket_description: updateDetails.value,
+            ticket_description: combined_description,
             ticket_from: updateRegarding.value,
             opener_id: 1,
             closer_id: closer_id
@@ -61,14 +71,17 @@
         saveTicket(updatedTx);
     });
 
+    cancelUpdateButton.addEventListener('click', () => {
+        window.location.href = './inbox.html';
+    });
 
 //fetch request
     async function getTicket(targetID){
-        console.log(targetID);
+        
         const response = await fetch (`/updateTicket/${targetID}`, {method: 'GET', headers: headers});
         if(response.ok){
             OGTicket = await response.json();
-            console.log(OGTicket);
+            
             displayTicket();
         }else{
             console.log('getTicket Error');
@@ -78,10 +91,10 @@
     async function saveTicket(updateTx){
         //fetch POST request with appropriate headers (update Ticket object in body)
         console.log(updateTx);
-        const response = await fetch(`/updateTicket`, {method: 'PUT', headers: headers, body: JSON.stringify(updateTx)});
+        const response = await fetch(`/updateTicket/${updateTx.ticket_id}`, {method: 'PUT', headers: headers, body: JSON.stringify(updateTx)});
         if(response.ok){
             console.log('Should be good, check the DB');
-            window.location.href = './inbox.html'
+            window.location.href = './inbox.html';
         } else {
             
         }
@@ -97,8 +110,7 @@
         return dateString;
     }
 
-    function displayTicket(){
-        console.log(OGTicket);
+    async function displayTicket(){
         const currentDate = todaysDate();
 
         let displayString = `<form><label for="updatePriority">Priority:</label><select name="updatePriority" id="updatePriority">`;
@@ -147,12 +159,12 @@
             displayString += `<option value="4" >Closed</option></select><br>`;
         }
 
-        displayString += `<label for="updateSubj">Subject:</label><input id="newSubj" type = "text" value = "${OGTicket.ticket_subject}" readonly><br>`;
-        displayString += `<p id="oldDetails">${OGTicket.ticket_description}</p><br>`;
-        displayString += `<label for="updateDetails">Any New Details?:</label><br><textarea id="updateDetails" type = "text" rows="4" cols="50"required></textarea><br><label for="updateRegarding">Regarding:</label>`;
+        displayString += `<label for="updateSubj">Subject:</label><input id="updateSubj" type = "text" value = "${OGTicket.ticket_subject}" readonly><br>`;
+        displayString += `<label for="oldDetails">Original Ticket Details</label><br><textarea id="oldDetails" type = "text" rows="4" cols="50" readonly>${OGTicket.ticket_description}</textarea><br>`;
+        displayString += `<label for="updateDetails">Any New Details?:</label><br><textarea id="updateDetails" type = "text" rows="4" cols="50" required></textarea><br><label for="updateRegarding">Regarding:</label>`;
         displayString += `<input id="updateRegarding" type = "text" value = "${OGTicket.ticket_from}" readonly><br>`;
         displayString += `<p>Current Date: <span id="currDate">${currentDate}</span> | Logged in as <span id="uid">NONE</span></p></form>`;
-
+        
         inputFieldArea.innerHTML = displayString;
     }
 
@@ -166,4 +178,23 @@
                 if(pair[0] == variable){return pair[1];}
         }
         return(false);
+    } 
+
+//This works as intended.
+    function concatDetails(todayDate, newDetails, oldDetails){
+        /*this function is used for making sure useful information gets concatenated into the detail field.
+            This field should be structured as such:
+                {open date} initial details by case-opener(linebreak)
+                {edit date} new details by next person working on it.(linebreak)    --how to do a linebreak that is going to be stored in SQL and also displayed in HTML?
+                {edit date} new details by next person working on it.(linebreak)
+                {edit date} new details by next person working on it.(linebreak)
+                {closed} on {closed date}
+        */
+        const finalResult = '' + oldDetails + '|' + todayDate + ': ' + newDetails + '|';
+        if(finalResult.length > 500){
+            console.log('max characters reached in description.')
+            finalResult = finalResult.slice(0, 500);
+        }
+        return finalResult;
+
     }

@@ -26,7 +26,6 @@ const tickets = [];
 async function isValidTicket(req, res, next){
         let { ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id } = req.body;
 
-    console.log(req.body);
     //What's the actual logic to validate a ticket object
 
     //Assume true:
@@ -69,9 +68,8 @@ async function isValidTicket(req, res, next){
         }*/
 
     //Sanitize string values and truncate if necessary
-    console.log(ticket_subject);
         ticket_subject = sanitizeInput(ticket_subject, 50);
-        ticket_description = sanitizeInput(ticket_description, 140);
+        ticket_description = sanitizeInput(ticket_description, 500);
         ticket_from = sanitizeInput(ticket_from, 40);
         
     //validate Date format (open_date, close_date)
@@ -104,7 +102,6 @@ async function isValidTicket(req, res, next){
 }
 
 function sanitizeInput(stringle, numChar){
-    console.log('inside sanitize:'+stringle);
     stringle = stringle.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"");
     stringle = stringle.trim();
             if(stringle.length > numChar){
@@ -126,14 +123,11 @@ txRouter.get('/inbox', async (req, res, next) => {
 
 //Create a new ticket from user input
 txRouter.post('/newTicket', isValidTicket, async (req, res, next) => {
-    console.log('inside POST');
     if(!req.isValid){
         res.status(400).send(req.validReason);
     } else {
         const {ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id} = req.body;
         const queryText = 'INSERT INTO tickets (open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id) VALUES ($1, NULL, $2, $3, $4, $5, $6, $7, NULL);';
-        console.log(req.body);
-        console.log(queryText);
         const queryParams = [
             open_date, 
             ticket_priority, 
@@ -145,13 +139,78 @@ txRouter.post('/newTicket', isValidTicket, async (req, res, next) => {
         ]
         await db.query(queryText, queryParams);
 
-        console.log(req.body);
         tickets.push(req.body);
         res.status(200).send(tickets);
     }
 });
 
-/*  Last Priority
+//This is returning an undefined value for some reason
+function concatDetails(todayDate, newDetails, oldDetails = ''){
+    console.log('inside Concat!');
+    /*this function is used for making sure useful information gets concatenated into the detail field.
+        This field should be structured as such:
+            {open date} initial details by case-opener(linebreak)
+            {edit date} new details by next person working on it.(linebreak)    --how to do a linebreak that is going to be stored in SQL and also displayed in HTML?
+            {edit date} new details by next person working on it.(linebreak)
+            {edit date} new details by next person working on it.(linebreak)
+            {closed} on {closed date}
+    */
+    console.log('' + oldDetails + '||' + todayDate + ': ' + newDetails + '||');
+    const finalResult = '' + oldDetails + '||' + todayDate + ': ' + newDetails + '||';
+    console.log(finalResult);
+
+    return finalResult;
+
+}
+
+  
+//GET route to get single ticket into
+//works
+txRouter.get('/updateTicket/:id', async (req, res, next) => {
+    const queryString = 'SELECT * FROM tickets WHERE ticket_id = $1'
+    const queryParams = [req.params['id']];     //the :id: passed in
+    const {rows} = await db.query(queryString, queryParams);
+    const {ticket_id, open_date, close_date, ticket_priority, ticket_status, ticket_subject, ticket_description, ticket_from, opener_id, closer_id} = rows[0];
+
+    const getOne = {
+            ticket_id,
+	        open_date,
+	        close_date,
+	        ticket_priority,
+	        ticket_status,
+	        ticket_subject,
+	        ticket_description,
+            ticket_from,
+	        opener_id,
+	        closer_id
+    }
+    res.status(200).send(getOne)
+});
+
+
+
+//PUT route to update values of a ticket
+
+txRouter.put('/:id', isValidTicket, async (req, res, next) => {
+    //Updating a ticket should:
+        //display existing ticket_description in an uneditable field
+        //have a field to include more information
+        //when assembling the final object for insertion into DB, IF there's details to add, run concatDetails() to put it all together into one field again. If not, skip that to avoid weird formatting.
+    if(!req.IDMatch){ //valid ticket but ID doesn't match
+        req.isValid = false; 
+        req.validReason = 'ID does not exist yet. Make a new ticket with this ID before Updating it.'
+    }
+    if(!req.isValid){
+        res.status(400).send(req.validReason);
+    } else {    
+        
+
+        res.status(200).send();
+    }
+});
+
+
+/*Last Priority
 txRouter.delete('/:id', async (req, res, next) => {
     const target = req.params.id;
     let affEnv; 
@@ -181,58 +240,6 @@ txRouter.delete('/:id', async (req, res, next) => {
         res.status(200).send();
     }
 });
-
-
-//PUT route to update values of a ticket
-txRouter.put('/:id', isValidTicket, async (req, res, next) => {
-    if(!req.IDMatch){ //valid ticket but ID doesn't match
-        req.isValid = false; 
-        req.validReason = 'ID does not exist yet. Make a new ticket with this ID before Updating it.'
-    }
-    if(!req.isValid){
-        res.status(400).send(req.validReason);
-    } else {    
-        const newT = req.body;
-        
-        const newID = newT.ticket_id;
-        const newTarget = newT.wd_envelope_id;
-        const newDate = newT.ticket_date;
-        const newPayee = newT.payment_recipient;
-        const newAmount = newT.payment_amount;
-
-        const checkOld = 'SELECT * FROM tickets WHERE ticket_id = $1';
-        const { rows } = await db.query(checkOld, [newID]);
-        const oldT = rows[0]; //This object is the original version of the ticket in question from the database, for later use.
-        
-
-        //Query to update the ticket in question
-        const queryText = 'UPDATE tickets SET wd_envelope_id = $2, ticket_date = $3, payment_recipient = $4, payment_amount = $5 WHERE ticket_id = $1;'
-        await db.query(queryText, [newID, newTarget, newDate, newPayee, newAmount]);
-
-        //Handling balance changes between envelopes
-        if(oldT.wd_envelope_id != newTarget){
-        //different envelopes, two balance changes. 
-        //This naturally handles cases where the amount of the ticket is also being updated as well.
-            //First change old envelope back
-            const updateOldQuery = 'UPDATE envelopes SET current_value = current_value + $1 WHERE envelope_id = $2';
-            await db.query(updateOldQuery, [oldT.payment_amount, oldT.wd_envelope_id]);
-            //Second change new envelope to compensate
-            const updateNewQuery = 'UPDATE envelopes SET current_value = current_value - $1 WHERE envelope_id = $2';
-            await db.query(updateNewQuery, [newAmount, newTarget]);
-
-        } else if(oldT.payment_amount != newAmount){
-        //Case when envelope is the same, but amount changes.
-            //calculate difference
-            const diff = (oldT.payment_amount - newAmount);
-            //Query database and current_value = current_value - diff; or something to that effect
-            const amtQuery = 'UPDATE envelopes SET current_value = current_value + $1 WHERE envelope_id = $2';
-            await db.query(amtQuery, [diff, newTarget]);
-        }
-
-        res.status(200).send();
-    }
-});
-
 */
 
 txRouter.use((err, req, res, next) => {

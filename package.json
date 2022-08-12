@@ -4,7 +4,7 @@
   "description": "A ticket-tracking system",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -24,12 +24,17 @@
   "homepage": "https://github.com/jmpress/vigilant-palm-tree#readme",
   "dependencies": {
     "body-parser": "^1.20.0",
+    "chai": "^4.3.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-promise-router": "^4.1.1",
+    "mocha": "^10.0.0",
     "morgan": "^1.10.0",
     "path": "^0.12.7",
     "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "supertest": "^6.2.4"
   }
 }

@@ -12,7 +12,7 @@ CREATE TABLE tickets(
 	ticket_priority integer,
 	ticket_status integer,
 	ticket_subject varchar(50),
-	ticket_description varchar(140),
+	ticket_description varchar(500),
 	ticket_from varchar (40),
 	opener_id integer REFERENCES users(u_id) ON DELETE SET NULL,
 	closer_id integer REFERENCES users(u_id) ON DELETE SET NULL

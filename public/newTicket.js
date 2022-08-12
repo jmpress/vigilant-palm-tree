@@ -4,7 +4,10 @@
         'Content-Type': 'application/json'
     };
 
-//Input field Variables
+//Display area variables
+    const currDate = document.getElementById('currDate');
+
+//Input field variables
     const newPriority = document.getElementById('newPriority');
     const newSubj = document.getElementById('newSubj');
     const newDetails = document.getElementById('newDetails');
@@ -13,14 +16,12 @@
 //Button variables
     const newTicketButton = document.getElementById('newTicket');
 
-//eventHandlers
+//Page Load actions
+    currDate.innerHTML = todaysDate();
 
+//eventHandlers
     newTicketButton.addEventListener('click', () => {
-        let currentDate = new Date();
-        let cDay = currentDate.getDate();
-        let cMonth = currentDate.getMonth() + 1;
-        let cYear = currentDate.getFullYear();
-        let dateString = `${cYear}-${cMonth}-${cDay}`;
+        
         
         newTx = {
             ticket_id: 0,
@@ -40,7 +41,6 @@
 //fetch request
     async function postNewTicket(newTx){
         //fetch POST request with appropriate headers (new Ticket object in body)
-        console.log(newTx);
         const response = await fetch(`/newTicket`, {method: 'POST', headers: headers, body: JSON.stringify(newTx)});
         if(response.ok){
             console.log('Should be good, check the DB');
@@ -50,3 +50,12 @@
         }
     }
 
+//Helper functions
+function todaysDate(){
+    let currentDate = new Date();
+    let cDay = currentDate.getDate();
+    let cMonth = currentDate.getMonth() + 1;
+    let cYear = currentDate.getFullYear();
+    let dateString = `${cYear}-${cMonth}-${cDay}`;
+    return dateString;
+}

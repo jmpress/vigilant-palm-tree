@@ -15,6 +15,7 @@
 
 //Button variables
     const newTicketButton = document.getElementById('newTicket');
+    const cancelNewButton = document.getElementById('cancelNew');
 
 //Page Load actions
     currDate.innerHTML = todaysDate();
@@ -37,6 +38,11 @@
         };
         postNewTicket(newTx);
     });
+
+    cancelNewButton.addEventListener('click', () => {
+        window.location.href = './inbox.html';
+    });
+
 
 //fetch request
     async function postNewTicket(newTx){

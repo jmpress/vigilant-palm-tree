@@ -32,7 +32,7 @@
 
 //Display and formatting
     function displayTicketHeaders(){
-            let ticketHeaders = '<table class = "styled-table"><thead><tr><th onclick="sortOnID();">ID</th><th onclick="sortOnStatus();">Status</th><th onclick="sortOnPriority();">Priority</th><th>Summary</th><th onclick="sortOnFrom();">From</th></tr></thead><tbody>';
+            let ticketHeaders = '<table class = "styled-table"><thead><tr><th onclick="sortOnID();">ID</th><th onclick="sortOnStatus();">Status</th><th onclick="sortOnPriority();">Priority</th><th>Summary</th><th onclick="sortOnFrom();">Regarding</th></tr></thead><tbody>';
 
             tickets.forEach(ticket => {
                 if(ticket.ticket_status != 4 || hideClosed === false){
@@ -145,6 +145,8 @@
     }
 
 //These functions should maybe be server-side?
+    //No, because the server just wants integers. The front-end decides what those integers are used for.
+    //These could just as easily be variations on a 4-point scale concept. More application-specific jargon may make itself apparent as time goes on.
     function setPriority(pCode){
         switch (pCode) {
             case 1:

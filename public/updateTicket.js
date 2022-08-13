@@ -134,7 +134,7 @@
             displayString += `<option value="4" >Low</option></select>`;
         }       
 
-        displayString += `<label for="updateStatus">Status:</label><select name="updateStatus" id="updateStatus">`;
+        displayString += `<label for="updateStatus"> Status:</label><select name="updateStatus" id="updateStatus">`;
 
         if(OGTicket.ticket_status === 1){
             displayString += `<option value="1" selected>Open</option>`;

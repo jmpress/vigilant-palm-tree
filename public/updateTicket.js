@@ -94,7 +94,7 @@
         if(response.ok){
             window.location.href = './inbox.html';
         } else {
-            
+            console.log('saveTicket Error');
         }
     }
 
@@ -108,7 +108,7 @@
         return dateString;
     }
 
-    async function displayTicket(){
+    function displayTicket(){
         const currentDate = todaysDate();
 
         let displayString = `<form><label for="updatePriority">Priority:</label><select name="updatePriority" id="updatePriority">`;

@@ -9,38 +9,28 @@
     <title>Vigilant-Palm-Tree| New User Registration</title>
 </head>
 <body>
-    Please fill out the fields below to register.
+    Please fill out the fields below to register.<br>
     <div id="inputFieldArea">
         <form>
-            <label for="newPriority">Priority:</label>
-            <select name="newPriority" id="newPriority">
-                <option value="1">Highest</option>
-                <option value="2">High</option>
-                <option value="3" selected>Normal</option>
-                <option value="4">Low</option>
-            </select><br>
+            <label for="userEmail">E-mail address:</label>
+            <input id="userEmail" type = "text" required><br>
 
-            <label for="newSubj">*Subject:</label>
-                <input id="newSubj" type = "text" required><br>
+            <label for="userPassA">Password:</label>
+            <input id="userPassA" type = "password" required><br>
 
-            <label for="newDetails">*Details:</label><br>
-                <textarea id="newDetails" type = "text" rows="4" cols="50"required></textarea><br>
-
-            <label for="regarding">*Regarding:</label>
-                <input id="regarding" type = "text" required><br>
-            <p>Current Date: <span id="currDate">NOW</span> | Logged in as <span id="uid">NONE</span></p>
-
+            <label for="userPassB">Password (confirm):</label>
+            <input id="userPassB" type = "password" required><br>
+            
+            <p>Current Date: <span id="currDate">NOW</span></p>
 
         </form>
     </div>
     <div id="buttonArea">
-        <button id = "newTicket">Open Ticket!</button>
+        <button id = "register">Register!</button>
         <button id = "cancelNew">Cancel</button>
 
     </div>
 
-
-    <a href="./index.html">Log Out</a>
     <script src="./newUser.js"></script>
 
 </body>

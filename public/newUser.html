@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./style.css" rel="stylesheet"></link>
+    <link rel="shortcut icon" href="./favicon.ico" />
+    <title>Vigilant-Palm-Tree| New User Registration</title>
+</head>
+<body>
+    Please fill out the fields below to register.
+    <div id="inputFieldArea">
+        <form>
+            <label for="newPriority">Priority:</label>
+            <select name="newPriority" id="newPriority">
+                <option value="1">Highest</option>
+                <option value="2">High</option>
+                <option value="3" selected>Normal</option>
+                <option value="4">Low</option>
+            </select><br>
+
+            <label for="newSubj">*Subject:</label>
+                <input id="newSubj" type = "text" required><br>
+
+            <label for="newDetails">*Details:</label><br>
+                <textarea id="newDetails" type = "text" rows="4" cols="50"required></textarea><br>
+
+            <label for="regarding">*Regarding:</label>
+                <input id="regarding" type = "text" required><br>
+            <p>Current Date: <span id="currDate">NOW</span> | Logged in as <span id="uid">NONE</span></p>
+
+
+        </form>
+    </div>
+    <div id="buttonArea">
+        <button id = "newTicket">Open Ticket!</button>
+        <button id = "cancelNew">Cancel</button>
+
+    </div>
+
+
+    <a href="./index.html">Log Out</a>
+    <script src="./newUser.js"></script>
+
+</body>
+</html>

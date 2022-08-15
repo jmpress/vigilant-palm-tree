@@ -3,7 +3,7 @@ const db = require('../db/db');
 const Router = require('express-promise-router');
 const txRouter = new Router();
 
-//Internal Data Structure for holding Ticket objects
+//Internal Data Structure for holding Objects
 const tickets = [];
 
 /* Ticket object definition:
@@ -105,7 +105,7 @@ async function isValidTicket(req, res, next){
 }
 
 function sanitizeInput(stringle, numChar){
-    stringle = stringle.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"");
+    stringle = stringle.replace(/[^a-z0-9áéíóúñü \.,_@-]/gim,"");
     stringle = stringle.trim();
             if(stringle.length > numChar){
                 stringle = stringle.slice(0, numChar);
@@ -242,4 +242,6 @@ txRouter.use((err, req, res, next) => {
     res.status(err.status).send(err.message);
 })
 
-module.exports = txRouter;
+
+
+module.exports = {txRouter};

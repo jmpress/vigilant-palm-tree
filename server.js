@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-const txRouter = require('./routes/ticketRouter');
+const { txRouter } = require('./routes/ticketRouter');
+const { userRouter } = require('./routes/userRouter');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -25,6 +26,7 @@ app.use(express.static(path.join(_dirname + 'public')));
 
 // middleware for envelope handling
 app.use('/', txRouter);
+app.use('/user', userRouter);
 
 app.get('/', (req, res, next) => {
     res.sendFile(path.join(_dirname + 'public/index.html'));

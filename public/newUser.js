@@ -20,7 +20,7 @@ const cancelNewButton = document.getElementById('cancelNew');
 currDate.innerHTML = todaysDate();
 
 //eventHandlers
-registerButton.addEventListener('click', () => {
+registerButton.addEventListener('click', async () => {
     if(checkSamePass()){
         newUser = {
             u_id: 0,
@@ -28,8 +28,7 @@ registerButton.addEventListener('click', () => {
             plain_pass: userPassA.value,
             num_tix_closed: 0
         };
-        console.log(newUser);
-        postNewUser(newUser);
+        saltedUser = await postNewUser(newUser);
     }
 });
 
@@ -41,12 +40,14 @@ cancelNewButton.addEventListener('click', () => {
 //fetch request
 async function postNewUser(newUser){
     //fetch POST request with appropriate headers (new User object in body)
-    const response = await fetch(`/newUser`, {method: 'POST', headers: headers, body: JSON.stringify(newUser)});
+    const response = await fetch(`/user/new`, {method: 'POST', headers: headers, body: JSON.stringify(newUser)});
     if(response.ok){
         console.log('Should be good, check the DB');
+        result = await response.json();
+        return result;
         window.location.href = './inbox.html'
     } else {
-        
+        console.log('error in POST');
     }
 }
 

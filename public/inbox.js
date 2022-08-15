@@ -150,7 +150,7 @@
     function setPriority(pCode){
         switch (pCode) {
             case 1:
-                return 'Highest';
+                return 'Critical';
                 break;
             case 2:
                 return 'High';

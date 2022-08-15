@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/jmpress/vigilant-palm-tree#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
     "chai": "^4.3.6",
     "cors": "^2.8.5",

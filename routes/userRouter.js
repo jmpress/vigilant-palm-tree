@@ -3,6 +3,7 @@ const db = require('../db/db');
 const Router = require('express-promise-router');
 const bcrypt = require('bcrypt');
 const userRouter = new Router();
+const { sanitizeInput, ensureAuthenticated } = require('./helperFuncs');
 
 const users = [];
 
@@ -44,14 +45,9 @@ function isValidEmail(questionableEmail){
     return re.test(questionableEmail);
 }
 
-function sanitizeInput(stringle, numChar){
-    stringle = stringle.replace(/[^a-z0-9áéíóúñü \.,_@-]/gim,"");
-    stringle = stringle.trim();
-            if(stringle.length > numChar){
-                stringle = stringle.slice(0, numChar);
-            }
-    return stringle;
-}
+userRouter.use('/login', async (req, res, next) => {
+
+})
 
 userRouter.post('/new', isValidUser, async (req, res, next) => {
     if(!req.isValid){

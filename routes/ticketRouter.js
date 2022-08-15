@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db/db');
 const Router = require('express-promise-router');
 const txRouter = new Router();
+const { sanitizeInput, ensureAuthenticated } = require('./helperFuncs');
 
 //Internal Data Structure for holding Objects
 const tickets = [];
@@ -104,16 +105,7 @@ async function isValidTicket(req, res, next){
         next();
 }
 
-function sanitizeInput(stringle, numChar){
-    stringle = stringle.replace(/[^a-z0-9áéíóúñü \.,_@-]/gim,"");
-    stringle = stringle.trim();
-            if(stringle.length > numChar){
-                stringle = stringle.slice(0, numChar);
-            }
-    return stringle;
-}
-
-txRouter.get('/inbox', async (req, res, next) => {
+txRouter.get('/inbox', ensureAuthenticated, async (req, res, next) => {
     const queryText = 'SELECT * FROM tickets;';
     tickets.length=0;
     const {rows} = await db.query(queryText);
@@ -125,7 +117,7 @@ txRouter.get('/inbox', async (req, res, next) => {
 
 
 //Create a new ticket from user input
-txRouter.post('/newTicket', isValidTicket, async (req, res, next) => {
+txRouter.post('/newTicket',ensureAuthenticated, isValidTicket, async (req, res, next) => {
     if(!req.isValid){
         res.status(400).send(req.validReason);
     } else {
@@ -151,7 +143,7 @@ txRouter.post('/newTicket', isValidTicket, async (req, res, next) => {
   
 //GET route to get single ticket into
 //works
-txRouter.get('/updateTicket/:id', async (req, res, next) => {
+txRouter.get('/updateTicket/:id', ensureAuthenticated, async (req, res, next) => {
     const queryString = 'SELECT * FROM tickets WHERE ticket_id = $1'
     const queryParams = [req.params['id']];     //the :id: passed in
     const {rows} = await db.query(queryString, queryParams);
@@ -174,7 +166,7 @@ txRouter.get('/updateTicket/:id', async (req, res, next) => {
 
 //PUT route to update values of a ticket
 //works, and increments user stat for closing a ticket when appropriate
-txRouter.put('/updateTicket/:id', isValidTicket, async (req, res, next) => {
+txRouter.put('/updateTicket/:id', ensureAuthenticated, isValidTicket, async (req, res, next) => {
     //Updating a ticket should:
     if(!req.isValid){
         res.status(400).send(req.validReason);

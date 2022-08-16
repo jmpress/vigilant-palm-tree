@@ -114,9 +114,9 @@
         let displayString = `<form><label for="updatePriority">Priority:</label><select name="updatePriority" id="updatePriority">`;
                         
         if(OGTicket.ticket_priority === 1){
-            displayString += `<option value="1" selected>Highest</option>`;
+            displayString += `<option value="1" selected>Critical</option>`;
         } else {
-            displayString += `<option value="1" >Highest</option>`;
+            displayString += `<option value="1" >Critical</option>`;
         }
         if(OGTicket.ticket_priority === 2){
             displayString += `<option value="2" selected>High</option>`;

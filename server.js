@@ -1,16 +1,19 @@
+//middleware via npm install
 const express = require('express');
 const app = express();
 const session = require('express-session');
 const passport = require('passport');
+const store = new session.MemoryStore();
 const GitHubStrategy = require('passport-github2').Strategy;
-
-const { txRouter } = require('./routes/ticketRouter');
-const { userRouter } = require('./routes/userRouter');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
+
+//middleware from ./routes folder
 const { ensureAuthenticated } = require('./routes/helperFuncs');
+const { txRouter } = require('./routes/ticketRouter');
+const { userRouter } = require('./routes/userRouter');
+
 const _dirname = './'
 module.exports = app;
 
@@ -48,7 +51,9 @@ app.use(morgan('dev'));
 app.use(session({
   secret: 'exeggutor',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: { maxAge: 300000000, secure: false },
+  store
 })
 )
 app.use(passport.initialize());
@@ -78,7 +83,8 @@ app.get('/', (req, res, next) => {
 });
 
 app.get('/logout', ensureAuthenticated, (req, res, next) => {
-
+  req.session.destroy();
+  res.status(200).send();
 });
 
 // Add your code to start the server listening at PORT below:   

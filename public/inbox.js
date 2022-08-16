@@ -12,6 +12,7 @@
     const newTicket = document.getElementById("newTicket");
     const testTicket = document.getElementById("testTicket");
     const showClosed = document.getElementById("showClosed");
+    const logoutButton = document.getElementById("logout");
     let sortDir = [1,1,1,1,1];
     
 //Object collection arrays
@@ -50,12 +51,17 @@
 
 //Event Listeners
     newTicket.addEventListener('click', () => {
-        window.location.href = './newTicket.html'
+        window.location.href = './newTicket.html';
     });
 
     showClosed.addEventListener('click', () => {
         hideClosed = !hideClosed;
         displayTicketHeaders();
+    });
+
+    logoutButton.addEventListener('click', async () =>{
+        await fetch('/logout');
+        window.location.href = './index.html';
     });
 
 //Sorting functions

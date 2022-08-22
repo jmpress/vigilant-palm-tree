@@ -7,12 +7,17 @@ function sanitizeInput(stringle, numChar){
     return stringle;
 }
 
-const ensureAuthenticated = (req, res, next) => {
-    if(req.isAuthenticated()){
-      return next();
-    } else {
-      //res.redirect('/login');
-    }
-  };
+function logSession(req, res){
+//At this point in the program, what does the session look like?
+    console.log('REQ');
+    console.log(req.user);
+    console.log(req.isAuthenticated)
+    //console.log(req.cookies);
+    //console.log(req.user);
+    console.log('RES');
+    console.log(res.session);
 
-module.exports = {sanitizeInput, ensureAuthenticated};
+
+}
+
+module.exports = {sanitizeInput, logSession};

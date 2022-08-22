@@ -25,10 +25,13 @@ registerButton.addEventListener('click', async () => {
         newUser = {
             u_id: 0,
             u_email: userEmail.value,
+            provider_id: '',
+            provider_name: 'local',
+            auth_token: '',
             plain_pass: userPassA.value,
             num_tix_closed: 0
         };
-        saltedUser = await postNewUser(newUser);
+        await postNewUser(newUser);
     }
 });
 
@@ -44,7 +47,6 @@ async function postNewUser(newUser){
     if(response.ok){
         console.log('Should be good, check the DB');
         result = await response.json();
-        return result;
         window.location.href = './inbox.html'
     } else {
         console.log('error in POST');

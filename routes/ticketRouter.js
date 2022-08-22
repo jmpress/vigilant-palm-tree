@@ -2,7 +2,8 @@ const express = require('express');
 const db = require('../db/db');
 const Router = require('express-promise-router');
 const txRouter = new Router();
-const { sanitizeInput, ensureAuthenticated } = require('./helperFuncs');
+const passport = require('passport');
+const { sanitizeInput, logSession } = require('./helperFuncs');
 
 //Internal Data Structure for holding Objects
 const tickets = [];
@@ -105,7 +106,19 @@ async function isValidTicket(req, res, next){
         next();
 }
 
+function ensureAuthenticated(req, res, next) {
+    logSession(req, res);
+    if (req.isAuthenticated()) {
+      return next();
+    } else {
+      res.redirect('/');
+    }
+  }
+  
 txRouter.get('/inbox', ensureAuthenticated, async (req, res, next) => {
+    
+    console.log('inside Inbox');
+    logSession(req, res);
     const queryText = 'SELECT * FROM tickets;';
     tickets.length=0;
     const {rows} = await db.query(queryText);
@@ -115,9 +128,10 @@ txRouter.get('/inbox', ensureAuthenticated, async (req, res, next) => {
     res.status(200).send(tickets);
 });
 
-
 //Create a new ticket from user input
 txRouter.post('/newTicket',ensureAuthenticated, isValidTicket, async (req, res, next) => {
+    console.log('inside newTicket');
+    logSession(req, res);
     if(!req.isValid){
         res.status(400).send(req.validReason);
     } else {
@@ -141,9 +155,11 @@ txRouter.post('/newTicket',ensureAuthenticated, isValidTicket, async (req, res, 
 });
 
   
-//GET route to get single ticket into
+//GET route to get single ticket info
 //works
 txRouter.get('/updateTicket/:id', ensureAuthenticated, async (req, res, next) => {
+    console.log('inside GET UpdateTicket');
+    logSession(req, res);
     const queryString = 'SELECT * FROM tickets WHERE ticket_id = $1'
     const queryParams = [req.params['id']];     //the :id: passed in
     const {rows} = await db.query(queryString, queryParams);
@@ -168,6 +184,8 @@ txRouter.get('/updateTicket/:id', ensureAuthenticated, async (req, res, next) =>
 //works, and increments user stat for closing a ticket when appropriate
 txRouter.put('/updateTicket/:id', ensureAuthenticated, isValidTicket, async (req, res, next) => {
     //Updating a ticket should:
+    console.log('inside PUT updateticket');
+    logSession(req, res);
     if(!req.isValid){
         res.status(400).send(req.validReason);
     } else {
@@ -191,7 +209,6 @@ txRouter.put('/updateTicket/:id', ensureAuthenticated, isValidTicket, async (req
             await db.query(queryText2, [closer_id]);
         }
 
-        //tickets.push(req.body);
         res.status(200).send();
     }
 });

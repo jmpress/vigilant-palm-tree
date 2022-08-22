@@ -7,6 +7,7 @@
 //Display Areas
     const filterArea = document.getElementById("filterArea");
     const ticketListArea = document.getElementById("ticketListArea");
+    const loggedInUserArea = document.getElementById('uid');
 
 //Button Assignment
     const newTicket = document.getElementById("newTicket");
@@ -17,10 +18,12 @@
     
 //Object collection arrays
     let tickets = [];
+    let users = [];
 
     let hideClosed = true;
 
     getTicketHeaders();
+    //getCurrentUser();
 
 //Fetch requests    
     async function getTicketHeaders(){
@@ -30,6 +33,17 @@
             displayTicketHeaders();
         }
     }
+
+    /*async function getCurrentUser(){      //this should use the info from req.user in some fashion
+        const response = await fetch('/user/current');
+        //console.log(response);
+        if(response.ok){
+            users = await response.json();
+            console.log(users);
+            loggedInUserArea.innerHTML = `User ID ${users[0].u_id}`
+        }
+        
+    }*/
 
 //Display and formatting
     function displayTicketHeaders(){
@@ -60,7 +74,7 @@
     });
 
     logoutButton.addEventListener('click', async () =>{
-        await fetch('/logout');
+        await fetch('/logout', {method:'POST'});
         window.location.href = './index.html';
     });
 

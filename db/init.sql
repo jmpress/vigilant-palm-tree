@@ -5,6 +5,14 @@ CREATE TABLE users(
 	num_tix_closed integer
 );
 
+CREATE TABLE authentication_profiles(
+	provider_id varchar(8),
+	provider_name varchar(16),
+	u_id integer REFERENCES users(u_id) ON DELETE CASCADE,
+	auth_token varchar(40),
+  	PRIMARY KEY(provider_id, provider_name)
+);
+
 CREATE TABLE tickets(
     ticket_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 	open_date date,

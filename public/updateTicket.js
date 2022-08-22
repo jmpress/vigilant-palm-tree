@@ -22,7 +22,7 @@
 
 //fetch the required info
     const targetID = getQueryVariable('id')
-    getTicket(targetID); //THIS ISN'T SETTING THE OGTicket object appropriately.
+    getTicket(targetID);
     
 
 //Page Load actions  - not many because majority of page is built after.
@@ -68,7 +68,8 @@
             opener_id: 1,
             closer_id: closer_id
         };
-        saveTicket(updatedTx);
+        await saveTicket(updatedTx);
+        window.location.href = './inbox.html';
     });
 
     cancelUpdateButton.addEventListener('click', () => {
@@ -77,7 +78,6 @@
 
 //fetch request
     async function getTicket(targetID){
-        
         const response = await fetch (`/updateTicket/${targetID}`, {method: 'GET', headers: headers});
         if(response.ok){
             OGTicket = await response.json();
@@ -92,7 +92,7 @@
         //fetch POST request with appropriate headers (update Ticket object in body)
         const response = await fetch(`/updateTicket/${updateTx.ticket_id}`, {method: 'PUT', headers: headers, body: JSON.stringify(updateTx)});
         if(response.ok){
-            window.location.href = './inbox.html';
+            console.log('ticket saved');
         } else {
             console.log('saveTicket Error');
         }

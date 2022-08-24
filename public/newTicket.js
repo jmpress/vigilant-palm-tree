@@ -47,7 +47,7 @@
 //fetch request
     async function postNewTicket(newTx){
         //fetch POST request with appropriate headers (new Ticket object in body)
-        const response = await fetch(`/newTicket`, {method: 'POST', headers: headers, body: JSON.stringify(newTx)});
+        const response = await fetch(`/tx/newTicket`, {method: 'POST', headers: headers, body: JSON.stringify(newTx)});
         if(response.ok){
             console.log('Should be good, check the DB');
             window.location.href = './inbox.html'

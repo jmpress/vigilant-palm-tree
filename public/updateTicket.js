@@ -78,7 +78,7 @@
 
 //fetch request
     async function getTicket(targetID){
-        const response = await fetch (`/updateTicket/${targetID}`, {method: 'GET', headers: headers});
+        const response = await fetch (`/tx/updateTicket/${targetID}`, {method: 'GET', headers: headers});
         if(response.ok){
             OGTicket = await response.json();
             
@@ -90,7 +90,7 @@
 
     async function saveTicket(updateTx){
         //fetch POST request with appropriate headers (update Ticket object in body)
-        const response = await fetch(`/updateTicket/${updateTx.ticket_id}`, {method: 'PUT', headers: headers, body: JSON.stringify(updateTx)});
+        const response = await fetch(`/tx/updateTicket/${updateTx.ticket_id}`, {method: 'PUT', headers: headers, body: JSON.stringify(updateTx)});
         if(response.ok){
             console.log('ticket saved');
         } else {

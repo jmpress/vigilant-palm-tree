@@ -9,6 +9,7 @@ function sanitizeInput(stringle, numChar){
 
 function logSession(req, res){
 //At this point in the program, what does the session look like?
+    /*
     console.log('REQ');
     console.log(req.user);
     console.log(req.isAuthenticated)
@@ -16,7 +17,7 @@ function logSession(req, res){
     //console.log(req.user);
     console.log('RES');
     console.log(res.session);
-
+    */
 
 }
 

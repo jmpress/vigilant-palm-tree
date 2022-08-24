@@ -2,7 +2,7 @@ const express = require('express');
 const db = require('../db/db');
 const Router = require('express-promise-router');
 const txRouter = new Router();
-const passport = require('passport');
+//const passport = require('passport');
 const { sanitizeInput, logSession } = require('./helperFuncs');
 
 //Internal Data Structure for holding Objects
@@ -105,7 +105,7 @@ async function isValidTicket(req, res, next){
         req.body = fixedNewTicket;
         next();
 }
-
+/*
 function ensureAuthenticated(req, res, next) {
     logSession(req, res);
     if (req.isAuthenticated()) {
@@ -114,8 +114,8 @@ function ensureAuthenticated(req, res, next) {
       res.redirect('/');
     }
   }
-  
-txRouter.get('/inbox', ensureAuthenticated, async (req, res, next) => {
+*/  
+txRouter.get('/inbox', async (req, res, next) => {
     
     console.log('inside Inbox');
     logSession(req, res);
@@ -129,7 +129,7 @@ txRouter.get('/inbox', ensureAuthenticated, async (req, res, next) => {
 });
 
 //Create a new ticket from user input
-txRouter.post('/newTicket',ensureAuthenticated, isValidTicket, async (req, res, next) => {
+txRouter.post('/newTicket', isValidTicket, async (req, res, next) => {
     console.log('inside newTicket');
     logSession(req, res);
     if(!req.isValid){
@@ -157,7 +157,7 @@ txRouter.post('/newTicket',ensureAuthenticated, isValidTicket, async (req, res, 
   
 //GET route to get single ticket info
 //works
-txRouter.get('/updateTicket/:id', ensureAuthenticated, async (req, res, next) => {
+txRouter.get('/updateTicket/:id', async (req, res, next) => {
     console.log('inside GET UpdateTicket');
     logSession(req, res);
     const queryString = 'SELECT * FROM tickets WHERE ticket_id = $1'
@@ -182,7 +182,7 @@ txRouter.get('/updateTicket/:id', ensureAuthenticated, async (req, res, next) =>
 
 //PUT route to update values of a ticket
 //works, and increments user stat for closing a ticket when appropriate
-txRouter.put('/updateTicket/:id', ensureAuthenticated, isValidTicket, async (req, res, next) => {
+txRouter.put('/updateTicket/:id', isValidTicket, async (req, res, next) => {
     //Updating a ticket should:
     console.log('inside PUT updateticket');
     logSession(req, res);

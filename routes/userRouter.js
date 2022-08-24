@@ -4,7 +4,7 @@ const express = require('express');
 const db = require('../db/db');
 const Router = require('express-promise-router');
 const bcrypt = require('bcrypt');
-const passport = require(passport);
+//const passport = require(passport);
 const userRouter = new Router();
 const { sanitizeInput, logSession} = require('./helperFuncs');
 

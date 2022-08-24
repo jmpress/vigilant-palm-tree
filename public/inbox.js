@@ -27,7 +27,7 @@
 
 //Fetch requests    
     async function getTicketHeaders(){
-        const response = await fetch('/inbox');
+        const response = await fetch('/tx/inbox');
         if(response.ok){
             tickets = await response.json();
             displayTicketHeaders();

@@ -192,7 +192,7 @@ passport.deserializeUser(async (user, done) => {
 
 //oAuth routes for Github (should they be somewhere else? )
 app.get('/auth/github', 
-  passport.authenticate('github', {scope: ['user']})
+  passport.authenticate('github', {scope: ['read:user, user:email']})
 );
 
 app.get('/auth/github/callback', 

@@ -62,7 +62,7 @@ app.use(passport.session());  //aka app.use(passport.authenticate('session'));
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: 'https://vigilant-palm-tree.herokuapp.com/auth/github/callback'
+    callbackURL: process.env.GITHUB_CALLBACK,
   }, async (accessToken, refreshToken, profile, done) => {  //this is the verify callback
         
     return done(null, profile); //return?

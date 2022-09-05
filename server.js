@@ -50,7 +50,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 1000*60*60, secure: false, sameSite: 'none' },
-  //secure: true,  when in production, make it true.
+  secure: true,  //when in production, make it true.
   store
 })
 )

@@ -7,6 +7,19 @@ function sanitizeInput(stringle, numChar){
     return stringle;
 }
 
+function randomString(len){
+    let newRandom='';
+    for(let i = 0; i < len; i++){
+        newRandom += randomChar();
+    }
+    return newRandom;
+}
+
+function randomChar(){
+    const randChar = String.fromCharCode(Math.floor(Math.random()*57)+64);
+    return randChar;
+}
+
 function logSession(req, res){
 //At this point in the program, what does the session look like?
     /*
@@ -21,4 +34,4 @@ function logSession(req, res){
 
 }
 
-module.exports = {sanitizeInput, logSession};
+module.exports = {sanitizeInput, logSession, randomString};

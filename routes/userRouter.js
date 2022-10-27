@@ -6,7 +6,7 @@ const Router = require('express-promise-router');
 const bcrypt = require('bcrypt');
 //const passport = require(passport);
 const userRouter = new Router();
-const { sanitizeInput, logSession} = require('./helperFuncs');
+const { sanitizeInput, logSession} = require('../utils/helperFuncs');
 
 
 const users = [];
@@ -161,4 +161,4 @@ userRouter.use((err, req, res, next) => {
     res.status(500).send(err.message);
 })
 
-module.exports = {users, userRouter};
+module.exports = {users, userRouter, comparePasswords};

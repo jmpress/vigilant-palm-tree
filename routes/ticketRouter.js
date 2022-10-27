@@ -3,7 +3,7 @@ const db = require('../db/db');
 const Router = require('express-promise-router');
 const txRouter = new Router();
 //const passport = require('passport');
-const { sanitizeInput, logSession } = require('./helperFuncs');
+const { sanitizeInput, logSession } = require('../utils/helperFuncs');
 
 //Internal Data Structure for holding Objects
 const tickets = [];
@@ -53,7 +53,7 @@ async function isValidTicket(req, res, next){
             }
         }
 
-    //Validate Priority and Status (1-4 each) (these may become dropdown values from input boxes)
+    //Validate Priority and Status (1-4 each)
         if(ticket_priority < 1 || ticket_priority > 4){
             req.isValid = false;
             req.validReason = 'Priority must be between 1 and 4';
@@ -62,13 +62,6 @@ async function isValidTicket(req, res, next){
             req.isValid = false;
             req.validReason = 'Status must be between 1 and 4';
         }
-
-    /*/make sure String values exist are clean (ticket_subject, ticket_description)
-        if(ticket_subject === undefined || ticket_subject === undefined || ticket_from === undefined){
-            req.isValid = false;
-            req.validReason = 'Please include all required fields'
-            next()
-        }*/
 
     //Sanitize string values and truncate if necessary
         ticket_subject = sanitizeInput(ticket_subject, 50);
@@ -213,38 +206,6 @@ txRouter.put('/updateTicket/:id', isValidTicket, async (req, res, next) => {
     }
 });
 
-
-/*Last Priority
-txRouter.delete('/:id', async (req, res, next) => {
-    const target = req.params.id;
-    let affEnv; 
-    let changeAmount;
-
-    //validate that target is a ticket that exists
-    req.isValid = tickets.some(ticket => {
-        if(ticket.ticket_id == target){
-            affEnv = ticket.wd_envelope_id;
-            changeAmount = ticket.payment_amount;
-            return true;
-        } else {return false;}
-    });
-    
-    if(!req.isValid){
-        res.status(404).send(req.validReason);
-    } else {
-        //if it's a valid ticket that exists, then
-        //Deletion Query
-        const deleteQuery = 'DELETE FROM tickets WHERE ticket_id = $1;';
-        await db.query(deleteQuery, [target]);
-
-        //Now change the balance of the envelope back
-        const updateQuery = 'UPDATE envelopes SET current_value = current_value + $1 WHERE envelope_id = $2';
-        await db.query(updateQuery, [changeAmount, affEnv]);
-            
-        res.status(200).send();
-    }
-});
-*/
 
 txRouter.use((err, req, res, next) => {
     console.log(err.message);

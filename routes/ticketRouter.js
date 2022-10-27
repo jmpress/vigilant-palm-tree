@@ -98,16 +98,7 @@ async function isValidTicket(req, res, next){
         req.body = fixedNewTicket;
         next();
 }
-/*
-function ensureAuthenticated(req, res, next) {
-    logSession(req, res);
-    if (req.isAuthenticated()) {
-      return next();
-    } else {
-      res.redirect('/');
-    }
-  }
-*/  
+
 txRouter.get('/inbox', async (req, res, next) => {
     
     console.log('inside Inbox');

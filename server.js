@@ -112,6 +112,6 @@ app.listen(PORT, () => {
 });
 
 function ensureAuthenticated(req, res, next) {
-  if(req.isAuthenticated()){ console.log('Authenticated!'); return next() };
+  if(req.isAuthenticated()){ return next() };
   res.redirect('/');
 }

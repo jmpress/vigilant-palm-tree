@@ -161,7 +161,7 @@
         displayString += `<label for="oldDetails">Original Ticket Details</label><br><textarea id="oldDetails" type = "text" rows="4" cols="50" readonly>${OGTicket.ticket_description}</textarea><br>`;
         displayString += `<label for="updateDetails">Any New Details?:</label><br><textarea id="updateDetails" type = "text" rows="4" cols="50" required></textarea><br><label for="updateRegarding">Regarding:</label>`;
         displayString += `<input id="updateRegarding" type = "text" value = "${OGTicket.ticket_from}" readonly><br>`;
-        displayString += `<p>Current Date: <span id="currDate">${currentDate}</span> | Logged in as <span id="uid">NONE</span></p></form>`;
+        displayString += `<p>Current Date: <span id="currDate">${currentDate}</span></p></form>`;
         
         inputFieldArea.innerHTML = displayString;
     }

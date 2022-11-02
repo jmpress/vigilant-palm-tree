@@ -31,7 +31,7 @@
             const result = await response.json();
             tickets = result.tickets;
             user = result.user
-            loggedInUserArea.innerHTML = user.u_id;
+            loggedInUserArea.innerHTML = `User ID ${user.u_id}`;
             displayTicketHeaders();
         }
     }

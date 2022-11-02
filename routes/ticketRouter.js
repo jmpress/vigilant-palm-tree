@@ -124,7 +124,7 @@ txRouter.post('/newTicket', isValidTicket, async (req, res, next) => {
             ticket_subject, 
             ticket_description, 
             ticket_from, 
-            opener_id, 
+            req.user.u_id, 
         ]
         await db.query(queryText, queryParams);
 
@@ -168,6 +168,8 @@ txRouter.put('/updateTicket/:id', isValidTicket, async (req, res, next) => {
 
         const queryText = `UPDATE tickets SET close_date = $2, ticket_priority = $3, ticket_status = $4, ticket_description = $5, closer_id = $6 WHERE ticket_id = $1;`;
         
+        if(closer_id!=null){closer_id = req.user.u_id}
+
         const queryParams = [
             ticket_id,
             close_date, 

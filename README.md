@@ -3,10 +3,10 @@
 #### By Jeffrey Press
 
 ## Description
-This is an exercise in writing a RESTful Express API that handles database operations for a PostgreSQL server via HTTP requests from a simple HTML/CSS/JS front-end, and incorporating authorization and authentication methods (sessions, passport.js, local and OAuth2.0 strategies).<br>
+This is an exercise in writing a RESTful Express API that handles database operations for a PostgreSQL server via HTTP requests from a simple HTML/CSS/JS front-end, and incorporating authorization and authentication methods (sessions, passport.js local strategy).<br>
 
 ## Specs
-+ Log in user via local user database or Github using OAuth2.0.
++ Log in user via local user database.
 + Display a table of all tickets.
     + Table is sortable both ascending and descending by clicking most columns headers. 
         + since ID is an auto-incremented key from the database, it can act as a rough "age" value.
@@ -60,7 +60,6 @@ Please contact j.michael.press@gmail.com with questions, comments, or concerns. 
    + Express
    + PostgreSQL
    + Passport.js
-   + passport-github2 (OAuth2.0)
 
 ### License
 This software is released under the GNU general public license.

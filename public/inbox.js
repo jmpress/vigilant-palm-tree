@@ -13,12 +13,11 @@
     const newTicket = document.getElementById("newTicket");
     const testTicket = document.getElementById("testTicket");
     const showClosed = document.getElementById("showClosed");
-    const logoutButton = document.getElementById("logout");
     let sortDir = [1,1,1,1,1];
     
 //Object collection arrays
     let tickets = [];
-    let users = [];
+    let user = {};
 
     let hideClosed = true;
 
@@ -29,7 +28,10 @@
     async function getTicketHeaders(){
         const response = await fetch('/tx/inbox');
         if(response.ok){
-            tickets = await response.json();
+            const result = await response.json();
+            tickets = result.tickets;
+            user = result.user
+            loggedInUserArea.innerHTML = user.u_id;
             displayTicketHeaders();
         }
     }
@@ -71,11 +73,6 @@
     showClosed.addEventListener('click', () => {
         hideClosed = !hideClosed;
         displayTicketHeaders();
-    });
-
-    logoutButton.addEventListener('click', async () =>{
-        await fetch('/logout', {method:'POST'});
-        window.location.href = './index.html';
     });
 
 //Sorting functions

@@ -9,18 +9,18 @@
     <title>Vigilant-Palm-Tree| Welcome</title>
 </head>
 <body>
-    <form>
-        <label for="userName">Username:</label>
-        <input id="userName" type = "text" required><br>
+    <form action="/auth/login" method="POST">
+        <label for="userEmail">Email:</label>
+        <input name="username" id="userEmail" type = "text" required><br>
         
         <label for="passWord">Password</label>
-        <input id="passWord" type = "text" required><br>
-        
-        <button id = "login">Login</button><br>
+        <input name="password" id="passWord" type = "password" required><br>
+        <INPUT type="submit" value="Log In"> <INPUT type="reset">
     </form>
-    <button id = "register" type = "button">Register</button>
-    <a id = "bypass" role = "button" class = "button" href="/inbox.html">Bypass</a>
-    <p>Current Date: <span id="currDate">NOW</span></p>
+    <br>
+    <form action="/auth/register" method="GET">
+        <input id="register" type="submit" value="Register">
+    </form>
     <script src="index.js"></script>
 </body>
 </html>

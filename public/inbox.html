@@ -27,8 +27,11 @@
 
     <br>
     <p>Logged in as: <span id="uid"></span></p>
-    <button id="logout">Log Out</button>
+    <div id="logout">
+        <form action="/auth/logout" method="POST">
+            <INPUT type="submit" value="Logout">
+        </form>
+    </div>
     <script src="./inbox.js"></script>
-
 </body>
 </html>

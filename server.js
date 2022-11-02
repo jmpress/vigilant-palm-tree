@@ -16,8 +16,10 @@ const path = require('path');
 const db = require('./db/db')
 
 //middleware and utils
-const { sanitizeInput, logSession, randomString} = require('./utils/helperFuncs');
+const { comparePasswords, randomString} = require('./utils/helperFuncs');
 const {txRouter} = require('./routes/ticketRouter');
+const {authRouter} = require('./routes/userRouter');
+const { query } = require('express');
 
 const _dirname = './'
 module.exports = app;
@@ -48,20 +50,68 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 1000*60*60, secure: false, sameSite: 'none' },
-  secure: true,  //when in production, make it true.
+  secure: true,
   store
 })
 )
 
 //Passport Configs
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.use('/tx', txRouter);
+passport.serializeUser((user, done) => {
+  done(null, user.u_id);
+});
+
+passport.deserializeUser(async (id, done) => {
+
+  const queryText = 'SELECT * FROM users WHERE u_id = $1';
+  const queryParams = [id];
+  const result = await db.query(queryText, queryParams);
+  const loggedInUser = result.rows[0];
+  if (!loggedInUser) {
+      return done(new Error('failed to deserialize'));
+  }
+  done(null, loggedInUser);
+
+});
+
+passport.use(
+  new LocalStrategy(async function (username, password, done) {
+    const queryText = 'SELECT * FROM users WHERE u_email = $1';
+    const queryParams = [username];
+    const result = await db.query(queryText, queryParams);
+
+    if(!result){return done(new Error('no response from db'));}
+    const user = result.rows[0];
+    console.log(user);
+      if (!user) {
+          console.log('Incorrect username.');
+          return done(null, false, { message: 'Incorrect username.' });
+      } else if (!(await comparePasswords(password, user.salted_hashed_pass))) {
+          console.log('Incorrect password');
+          return done(null, false, { message: 'Incorrect password.' });
+      } else {
+          console.log('ok');
+          done(null, user);
+      }
+    })
+  ); 
+
+
+app.use('/tx', ensureAuthenticated, txRouter);
+app.use('/auth', authRouter);
 
 app.get('/', (req, res, next) => {
-    res.sendFile(path.join(_dirname + 'public/inbox.html'));
+    res.sendFile(path.join(_dirname + 'public/index.html'));
 });
 
 // Add your code to start the server listening at PORT below:   
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
+
+function ensureAuthenticated(req, res, next) {
+  if(req.isAuthenticated()){ console.log('Authenticated!'); return next() };
+  res.redirect('/');
+}

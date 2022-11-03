@@ -1,0 +1,178 @@
+openapi: 3.0.1
+info:
+  title: vigilant-palm-tree
+  version: '1.0'
+paths:
+  /auth/login:
+    summary: Handles Passportjs user authentication.
+    post:
+      summary: Authenticates User using passport-local, returns to same page.
+      description: ''
+      operationId: ''
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - Auth
+    get:
+      summary: Navigates to form for logging in.
+      description: ''
+      operationId: ''
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - Auth
+  /auth/logout:
+    summary: Logs the current user out.
+    post:
+      summary: >-
+        Logs out current User via passportjs req.logout() function, returns to
+        same page.
+      description: ''
+      operationId: ''
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - Auth
+  /auth/register:
+    summary: Registers a new user into the database.
+    get:
+      summary: Navigates to form for registering a new User.
+      description: ''
+      operationId: ''
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - Auth
+    post:
+      summary: 'Registers a new User with given user input. '
+      description: Password is salted and hashed, navigates to /
+      operationId: ''
+      requestBody:
+        description: A new User object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - Auth
+  /tx/inbox:
+    summary: Handles inbox view operations
+    get:
+      summary: >-
+        Reads tickets database into array of ticket objects, returns array of
+        ticket objects for display.
+      description: ''
+      operationId: ''
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - Ticket
+  /tx/newTicket:
+    summary: Handles new ticket operations
+    post:
+      summary: >-
+        Creates a new ticket object from request body, saves to tickets
+        database, pushes to local array as well. 
+      description: ''
+      operationId: ''
+      requestBody:
+        description: A new Ticket object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - Ticket
+  /tx/updateTicket/{id}:
+    summary: Handles ticket update operations
+    get:
+      summary: Returns a single ticket's information from database for display
+      description: ''
+      operationId: ''
+      parameters:
+      - name: id
+        in: path
+        description: 'The id of the ticket.'
+        required: true
+        schema: 
+          type: integer
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - Ticket
+    put:
+      summary: >-
+        Updates ticket with id of {id} with new field information from request
+        body.
+      description: ''
+      operationId: ''
+      requestBody:
+        description: A new Ticket object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+      parameters:
+      - name: id
+        in: path
+        description: 'The id of the ticket.'
+        required: true
+        schema: 
+          type: integer
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - Ticket
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        u_id:
+          type: integer
+        u_email:
+          type: string
+        salted_hashed_pass:
+          type: string
+        num_tix_closed:
+          type: integer
+      xml:
+        name: User
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: integer
+        open_date:
+          type: string
+        close_date:
+          type: string
+        ticket_priority:
+          type: integer
+        ticket_status:
+          type: integer
+        ticket_subject:
+          type: string
+        ticket_description:
+          type: string
+        ticket_from:
+          type: string
+        opener_id:
+          type: integer
+        closer_id:
+          type: integer
+      xml:
+        name: Ticket

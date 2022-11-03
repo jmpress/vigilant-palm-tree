@@ -22,35 +22,32 @@ authRouter.post('/logout', (req, res, next) => {
     });
   });
 
+//next step: get this working!
 authRouter.route('/register')
     .get((req, res, next) => {
-        res.render('newUser');
+        res.redirect('/newUser.html');
     })
-    .post(validateUser, async (req, res, next) => {
-    const { firstName, lastName, userEmail, userPassA, userPassB } = req.body;
-    //check passA and passB are equal 
-    if(userPassA !== userPassB){res.redirect('/auth/register');}
+    .post(async (req, res, next) => {
+    const { u_email, plain_pass } = req.body;
     //Salt and hash the pass
-    const saltedPass = await makeSaltedHash(userPassA);
+    const saltedPass = await makeSaltedHash(plain_pass);
     //save new user to database.
-    const newUser = {
-        firstName, 
-        lastName,
-        email: userEmail,
-        token: '',
-        password: saltedPass
-    }
-    //const regUser = await db.User.create(newUser);
-    console.log("auto-generated ID:", regUser.id);
-    //redirect to auth/login
-    //res.redirect('/image/all');
+    const queryParams = [
+        u_email,
+        saltedPass,
+        0
+    ]
+    const queryText = 'INSERT INTO users (u_email, salted_hashed_pass, num_tix_closed) VALUES ($1, $2, $3);'
+    const regUser = await db.query(queryText, queryParams);
+    
+    res.status(200).send();
 });
 
 /*
 authRouter.get('/profile', (res, req, next) => {
     res.render('profile', {user: req.user});
 })
-*/
+
 
 function validateUser(req, res, next){
     let { firstName, lastName, userEmail, userPassA, userPassB } = req.body;
@@ -69,5 +66,5 @@ function validateUser(req, res, next){
     req.body = validUser;
     next();
 }
-
+*/
 module.exports = {authRouter};

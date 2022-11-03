@@ -84,7 +84,6 @@ passport.use(
 
     if(!result){return done(new Error('no response from db'));}
     const user = result.rows[0];
-    console.log(user);
       if (!user) {
           console.log('Incorrect username.');
           return done(null, false, { message: 'Incorrect username.' });
